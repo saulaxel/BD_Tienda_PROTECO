@@ -12,14 +12,13 @@
 #ifdef _WIN32
 #   define CLEAR "cls"
 #   include <locale.h>
-    setlocale(LC_ALL,"Spanish_Mexico");
 #elif __unix__
 #   define CLEAR "clear"
 #else
 #   define error "Weird OS, please specify the command to clear the screen"
 #endif // _WIN32
 
-#define ARCHIVO_USUARIOS "mis_usuarios.txt"
+#define ARCHIVO_USUARIOS  "mis_usuarios.txt"
 #define ARCHIVO_PRODUCTOS "mis_productos.txt"
 
 #ifndef NDEBUG
@@ -33,9 +32,9 @@
 typedef enum { falso, verdadero } Booleano;
 
 // Estructura para los usuarios
-#define LONGITUD_CUENTA 30
+#define LONGITUD_CUENTA     30
 #define LONGITUD_CONTRASENA 16
-#define MAX_USUARIOS 5
+#define MAX_USUARIOS         5
 
 struct usuario {
     unsigned char cuenta[LONGITUD_CUENTA+1];
@@ -83,7 +82,7 @@ void menu( void );
 
 /**
  * FunciOn establecerUsuariosIniciales: apuntador a cadena,
- estructura ListaUsuarios -> vacio
+ *                                      estructura ListaUsuarios -> vacio
  * DescripciOn: Permite al usuario ingresar usuarios
  * iniciales antes de solicitar datos para el ingreso
  **/
@@ -122,7 +121,7 @@ void cambiarUsuario( Usuario *usr, ListaUsuarios *misUsuarios );
  * DescipciOn: Recibe dos apuntadores a cadena (usr y contra) en los
  *  que almacenarA los datos que pide desde consola
  **/
-void leerDatosUsuario( unsigned char *usr, unsigned char *contra);
+void leerDatosUsuario( unsigned char *usr, unsigned char *contra );
 
 /**
  * FunciOn comprobarUsuario: estructura Usuario,
@@ -131,7 +130,7 @@ void leerDatosUsuario( unsigned char *usr, unsigned char *contra);
  *  base de datos actual para devolver si el usuario se encuentra
  *  o no registrado
  **/
-Booleano comprobarUsuario( Usuario *usr, ListaUsuarios *misUsuarios);
+Booleano comprobarUsuario( Usuario *usr, ListaUsuarios *misUsuarios );
 
 /**
  * FunciOn crearUsuario: vacio -> apuntador a Usuario
@@ -187,7 +186,7 @@ void mostrarProductos( void );
  *  medio de memoria dinAmica e inicializado con datos pedidos
  *  por consola para al final regresar una referencia al mismo.
  **/
-Producto * crearProducto(void);
+Producto * crearProducto( void );
 
 /**
  * FunciOn agregarProducto: apuntador a estrucutra Producto,
@@ -196,7 +195,7 @@ Producto * crearProducto(void);
  * DescripciOn: Recibe un nuevo producto y lo almacena en la
  *  lista especificada como argumento
  **/
-Booleano agregarProducto( Producto * nvo, ListaProductos *misProductos);
+Booleano agregarProducto( Producto * nvo, ListaProductos *misProductos );
 
 /**
  * FunciOn eliminarProducto: apuntador a cadena,
@@ -214,53 +213,57 @@ void eliminarProducto( Usuario *adm, ListaProductos *misProductos );
  **/
 void leerLineaYDescartar( void );
 
-int main(void) {
+int main( void ) {
     ListaProductos misProductos = { NULL, NULL, 0 };
     ListaUsuarios misUsuarios = { NULL, NULL, 0 };
     short condicion = 0;
     Usuario administrador = { {0}, {0}, NULL, NULL };
 
-    system(CLEAR);
+    #ifdef _WIN32
+    setlocale( LC_ALL,"Spanish_Mexico" );
+    #endif
+    
+    system( CLEAR );
     // Recuperar los datos de la base de datos
     leerBD_Usuarios( &misUsuarios );
     leerBD_Productos( &misProductos );
-    printf("\n\t_____________________________________________\n");
-    printf("\tLas bases de datos se han leido correctamente\n\n");
+    printf( "\n\t_____________________________________________\n" );
+    printf( "\tLas bases de datos se han leido correctamente\n\n" );
     // Si la base de datos de usuarios esta vacia --> La aplicacion no
     // ha sido usada
     establecerUsuariosIniciales( &administrador, &misUsuarios );
 
     do {
-        system(CLEAR);
-        printf("Usuario: %s \n\n", administrador.cuenta);
+        system( CLEAR );
+        printf( "Usuario: %s \n\n", administrador.cuenta );
 
-        printf("Ingrese la opción deseada\n");
-        menu();
-        scanf("%hd",&condicion);
+        printf( "Ingrese la opción deseada\n" );
+        menu( );
+        scanf( "%hd",&condicion );
 
         switch ( condicion ) {
             case 1:
-                mostrarUsuarios();
+                mostrarUsuarios( );
                 break;
 
             case 2:
-                mostrarProductos();
+                mostrarProductos( );
                 break;
 
             case 3:
                 if ( misUsuarios.num_usuarios < MAX_USUARIOS ) {
                     if ( agregarUsuario( crearUsuario(),&misUsuarios ) ) {
-                        printf("Hay un total de %d usuario(s)\n",
-                                misUsuarios.num_usuarios);
+                        printf( "Hay un total de %d usuario(s)\n",
+                                misUsuarios.num_usuarios );
 
                         escribirBD_Usuarios( &misUsuarios );
                     }
                 } else {
-                    printf("Lo sentimos, se ha alcanzado el máximo número\n");
-                    printf("de usuarios\n");
-                    getchar();
+                    printf( "Lo sentimos, se ha alcanzado el máximo número\n" );
+                    printf( "de usuarios\n" );
+                    getchar( );
                 }
-                getchar();
+                getchar( );
                 break;
 
             case 4:
@@ -272,16 +275,16 @@ int main(void) {
             case 5:
                 if ( misProductos.num_productos < MAX_PRODUCTOS ) {
                     if ( agregarProducto( crearProducto(), &misProductos ) ) {
-                        printf("Hay un total de %d producto(s)\n",
-                                misProductos.num_productos);
+                        printf( "Hay un total de %d producto(s)\n",
+                                misProductos.num_productos );
                         escribirBD_Productos( &misProductos );
                     }
                 }else{
-                    printf("Lo sentimos, se ha alcanzado el máximo número\n");
-                    printf("de productos\n");
-                    getchar();
+                    printf( "Lo sentimos, se ha alcanzado el máximo número\n" );
+                    printf( "de productos\n" );
+                    getchar( );
                 }
-                getchar();
+                getchar( );
                 break;
 
             case 6:
@@ -295,197 +298,192 @@ int main(void) {
                 break;
 
             case 8:
-                printf("Esperamos volver a verlo pronto\n");
-                leerLineaYDescartar();
-                getchar();
+                printf( "Esperamos volver a verlo pronto\n" );
+                leerLineaYDescartar( );
+                getchar( );
                 break;
 
             default:
-                printf("Error, opción no valida\n");
-                leerLineaYDescartar();
-                getchar();
+                printf( "Error, opción no valida\n" );
+                leerLineaYDescartar( );
+                getchar( );
                 break;
         }
     } while ( condicion != 8 );
 
 
-    getchar();
+    getchar( );
     return 0;
 }
 
 // Contenido de la funciOn "menu"
-void menu() {
-    printf("\t 1) Mostrar usuarios guardados\n");
-    printf("\t 2) Mostrar productos guardados\n");
-    printf("\t 3) Agregar usuario\n");
-    printf("\t 4) Eliminar usuario\n");
-    printf("\t 5) Agregar producto\n");
-    printf("\t 6) Eliminar producto\n");
-    printf("\t 7) Cambiar de usuario\n");
-    printf("\t 8) Salir\n");
+void menu( ) {
+    printf( "\t 1) Mostrar usuarios guardados\n"
+            "\t 2) Mostrar productos guardados\n"
+            "\t 3) Agregar usuario\n"
+            "\t 4) Eliminar usuario\n"
+            "\t 5) Agregar producto\n"
+            "\t 6) Eliminar producto\n"
+            "\t 7) Cambiar de usuario\n"
+            "\t 8) Salir\n" );
 }
 
 // Contenido de la funciOn "establecerUsuariosIniciales"
 void establecerUsuariosIniciales( Usuario *usr, ListaUsuarios *misUsuarios ) {
 
     if ( misUsuarios->num_usuarios == 0 ) {
-        printf("Usted será el primer usuario\n");
+        printf( "Usted será el primer usuario\n" );
     }
 
-    leerDatosUsuario( usr->cuenta, usr->contrasena);
+    leerDatosUsuario( usr->cuenta, usr->contrasena );
 
-    if ( misUsuarios->num_usuarios == 0) {
+    if ( misUsuarios->num_usuarios == 0 ) {
         if ( agregarUsuario( usr, misUsuarios ) ) {
             escribirBD_Usuarios( misUsuarios );
-            printf("Felicidades %s, ahora puedes administrar una\n",usr->cuenta);
-            printf("base de datos\n");
-            getchar();
+            printf( "Felicidades %s, ahora puedes administrar una\n",usr->cuenta );
+            printf( "base de datos\n" );
+            getchar( );
         }
     } else {
-        if ( comprobarUsuario( usr, misUsuarios ) == falso ){
+        if ( comprobarUsuario( usr, misUsuarios ) == falso ) {
 
-            printf("Lo sentimos, el nombre de usuario o contraseña\n");
-            printf("no son validos, pida al administrador que le de\n");
-            printf("acceso\n");
+            printf( "Lo sentimos, el nombre de usuario o contraseña\n" );
+            printf( "no son validos, pida al administrador que le de\n" );
+            printf( "acceso\n" );
 
-            getchar();
-            exit(0);
-
+            getchar( );
+            exit( 0 );
         }
     }
 }
 
 // Contenido de la funciOn "leerBD_Usuarios"
 void leerBD_Usuarios( ListaUsuarios *misUsuarios ) {
-    FILE *ap_BD_usuarios = fopen(ARCHIVO_USUARIOS,"r");
+    FILE *ap_BD_usuarios = fopen( RCHIVO_USUARIOS, "r" );
     Usuario *nvo;
 
-    printf("Leyendo la base de datos de usuarios...\n");
-    getchar();
+    printf( "Leyendo la base de datos de usuarios...\n" );
+    getchar( );
 
     if ( ap_BD_usuarios ) {
 
         while ( !feof(ap_BD_usuarios) ) {
-            nvo = (Usuario*) malloc( sizeof(Usuario) );
-            fscanf(ap_BD_usuarios,"%30[^\t]\t",nvo->cuenta);
-            fscanf(ap_BD_usuarios,"%16[^\t]\n",nvo->contrasena);
-            printf("Se ha leido un usuario\n");
-            printf("Sus datos son %s %s\n",nvo->cuenta,nvo->contrasena);
+            nvo = (Usuario *) malloc( sizeof( Usuario ) );
+            fscanf( ap_BD_usuarios, "%30[^\t]\t", nvo->cuenta );
+            fscanf( ap_BD_usuarios, "%16[^\t]\n", nvo->contrasena );
+            printf( "Se ha leido un usuario\n" );
+            printf( "Sus datos son %s %s\n", nvo->cuenta,nvo->contrasena );
             agregarUsuario( nvo, misUsuarios );
         }
 
-        printf("La base de datos se  de usuarios ha leido completamente\n");
-        printf("Sus datos son\n");
+        printf( "La base de datos se  de usuarios ha leido completamente\n" );
+        printf( "Sus datos son\n" );
 
-        int i;
         Usuario *aux = misUsuarios->primero;
-        for ( i = 1; i <= misUsuarios->num_usuarios; ++i ) {
-            printf("%d %s %s\n", i, aux->cuenta, aux->contrasena);
+        for ( int i = 1; i <= misUsuarios->num_usuarios; ++i ) {
+            printf( "%d %s %s\n", i, aux->cuenta, aux->contrasena );
             aux = aux->siguiente;
         }
 
-        fclose(ap_BD_usuarios);
+        fclose( ap_BD_usuarios );
     } else {
-        printf("No hay usuarios guardados\n");
+        printf( "No hay usuarios guardados\n" );
     }
 
     escribirBD_Usuarios( misUsuarios );
-    getchar();
+    getchar( );
 }
 
 // Contenido de la funciON "escribirBD_Usuarios"
 void escribirBD_Usuarios( ListaUsuarios *misUsuarios ) {
-    FILE *ap_BD_usuarios = fopen(ARCHIVO_USUARIOS,"w");
+    FILE *ap_BD_usuarios = fopen( ARCHIVO_USUARIOS, "w" );
     Usuario *aux = misUsuarios->primero;
-    int i;
 
-    for ( i = 1; i <= misUsuarios->num_usuarios; ++i) {
-        fprintf(ap_BD_usuarios,"%s\t%s\t\n",aux->cuenta,aux->contrasena);
+    for ( int i = 1; i <= misUsuarios->num_usuarios; ++i ) {
+        fprintf( ap_BD_usuarios,"%s\t%s\t\n", aux->cuenta, aux->contrasena );
         aux = aux->siguiente;
     }
 
-    fclose(ap_BD_usuarios);
+    fclose( ap_BD_usuarios );
 }
 
 // Contenido de la funciOn "mostrarUsuarios"
 void mostrarUsuarios( void ) {
-    FILE *ap_BD_usuarios = fopen(ARCHIVO_USUARIOS,"r");
-    unsigned char cadena[LONGITUD_CUENTA+1];
+    FILE *ap_BD_usuarios = fopen( ARCHIVO_USUARIOS, "r" );
+    unsigned char cadena[ LONGITUD_CUENTA + 1 ];
     int i = 1;
 
     if ( ap_BD_usuarios ) {
 
-        while ( !feof(ap_BD_usuarios) ) {
-            printf("%2d",i);
-            fscanf(ap_BD_usuarios,"%30[^\t]\t",cadena);
-            printf("\t%30s",cadena);
-            fscanf(ap_BD_usuarios,"%16[^\t]\n",cadena);
-            printf("\t%16s\n",cadena);
+        while ( !feof( ap_BD_usuarios ) ) {
+            printf( "%2d", i );
+            fscanf( ap_BD_usuarios, "%30[^\t]\t", cadena );
+            printf( "\t%30s", cadena );
+            fscanf( ap_BD_usuarios, "%16[^\t]\n", cadena );
+            printf( "\t%16s\n", cadena );
             ++i;
         }
-        putchar('\n');
+        putchar( '\n' );
 
-        fclose(ap_BD_usuarios);
+        fclose( ap_BD_usuarios );
     } else {
-        printf("Parece que no hay usuarios registrados\n");
+        printf( "Parece que no hay usuarios registrados\n" );
     }
-    getchar();
-    getchar();
+    getchar( );
+    getchar( );
 }
 
 // Contenido de la funciOn "cambiarUsuario"
-void cambiarUsuario( Usuario *usr, ListaUsuarios *misUsuarios ){
-    Usuario *nuevoUsuario = (Usuario *) malloc(sizeof(Usuario));
+void cambiarUsuario( Usuario *usr, ListaUsuarios *misUsuarios ) {
+    Usuario *nuevoUsuario = (Usuario *) malloc( sizeof( Usuario ) );
     Usuario *aux = misUsuarios->primero;
     Booleano cambio = falso;
-    int i;
 
-    leerDatosUsuario(nuevoUsuario->cuenta,nuevoUsuario->contrasena);
+    leerDatosUsuario( nuevoUsuario->cuenta, nuevoUsuario->contrasena );
 
-    for ( i = 1; i <= misUsuarios->num_usuarios; ++i) {
+    for ( int i = 1; i <= misUsuarios->num_usuarios; ++i ) {
         if (
-                strcmp(nuevoUsuario->cuenta, aux->cuenta) == 0 &&
-                strcmp(nuevoUsuario->contrasena, aux->contrasena) == 0
+                strcmp( nuevoUsuario->cuenta, aux->cuenta ) == 0 &&
+                strcmp( nuevoUsuario->contrasena, aux->contrasena ) == 0
            )
         {
-            strcpy(usr->cuenta,nuevoUsuario->cuenta);
-            strcpy(usr->contrasena,nuevoUsuario->contrasena);
+            strcpy( usr->cuenta,nuevoUsuario->cuenta );
+            strcpy( usr->contrasena,nuevoUsuario->contrasena );
             cambio = verdadero;
         }
         aux = aux->siguiente;
     }
 
-    if (cambio)
-        printf("Cambio de usuario correctamente realizado\n");
+    if ( cambio )
+        printf( "Cambio de usuario correctamente realizado\n" );
     else
-        printf("El cambio de usuario ha fallado\n");
+        printf( "El cambio de usuario ha fallado\n" );
 
-    getchar();
-    getchar();
+    getchar( );
+    getchar( );
 }
 
 // Contenido de la funciOn "leerDatosUsuario"
-void leerDatosUsuario( unsigned char *cta, unsigned char *contra){
+void leerDatosUsuario( unsigned char *cta, unsigned char *contra ) {
 
-    printf("Ingrese la cuenta: ");
-    scanf("%30s",cta);
-    leerLineaYDescartar();
-    fflush(stdin);
+    printf( "Ingrese la cuenta: " );
+    scanf( "%30s", cta );
+    leerLineaYDescartar( );
+    fflush( stdin );
 
-    printf("Ingrese la contraseña: ");
-    scanf("%16s",contra);
-    leerLineaYDescartar();
-    fflush(stdin);
-    putchar('\n');
+    printf( "Ingrese la contraseña: " );
+    scanf( "%16s", contra );
+    leerLineaYDescartar( );
+    fflush( stdin );
+    putchar( '\n' );
 }
 
 // Contenido de la funciOn "comprobarUsuario"
 Booleano comprobarUsuario( Usuario *usr, ListaUsuarios *misUsuarios ) {
     Usuario *aux = misUsuarios->primero;
-    int i;
 
-    for ( i = 1; i <= misUsuarios->num_usuarios ; ++i ) {
-        printf("Comparando con el usuario %d\n", i);
+    for ( int i = 1; i <= misUsuarios->num_usuarios ; ++i ) {
+        printf( "Comparando con el usuario %d\n", i );
         //printf("Las cuentas son: %s %s\n", usr->cuenta, aux->cuenta);
         //printf("El resultado es: %d\n", strcmp(usr->cuenta, aux->cuenta) );
 
@@ -494,10 +492,10 @@ Booleano comprobarUsuario( Usuario *usr, ListaUsuarios *misUsuarios ) {
         //  aux->contrasena);
         //printf("El resultado es: %d\n",
         //  strcmp(usr->contrasena, aux->contrasena) );
-        if ( strcmp(usr->contrasena, aux->contrasena) )
-            printf("No hay correspondencia\n");
+        if ( strcmp( usr->contrasena, aux->contrasena ) )
+            printf( "No hay correspondencia\n" );
         else
-            printf("Hay correspondencia\n");
+            printf( "Hay correspondencia\n" );
 
         if (
                 strcmp( aux->cuenta, usr->cuenta ) == 0 &&
@@ -515,7 +513,7 @@ Booleano comprobarUsuario( Usuario *usr, ListaUsuarios *misUsuarios ) {
 Usuario * crearUsuario( void ) {
     Usuario *aux;
 
-    aux = (Usuario *) malloc( sizeof(Usuario) );
+    aux = (Usuario *) malloc( sizeof( Usuario ) );
     aux->siguiente = NULL;
     aux->anterior = NULL;
 
@@ -525,7 +523,7 @@ Usuario * crearUsuario( void ) {
 }
 
 // Contenido de la funciOn "agregarUsuario"
-Booleano agregarUsuario( Usuario *nvo, ListaUsuarios *misUsuarios ){
+Booleano agregarUsuario( Usuario *nvo, ListaUsuarios *misUsuarios ) {
     Usuario *apt = misUsuarios->primero;
     Booleano existente = falso;
     int i;
@@ -538,8 +536,8 @@ Booleano agregarUsuario( Usuario *nvo, ListaUsuarios *misUsuarios ){
     }
 
     if ( existente ) {
-        printf("Lo sentimos, el nombre de usuario ya esta ocupado\n");
-        getchar();
+        printf( "Lo sentimos, el nombre de usuario ya esta ocupado\n" );
+        getchar( );
         return falso;
     } else {
         if ( misUsuarios->num_usuarios != 0 ) {
@@ -551,53 +549,52 @@ Booleano agregarUsuario( Usuario *nvo, ListaUsuarios *misUsuarios ){
         }
 
         ++misUsuarios->num_usuarios;
-        printf("Usuario añadido correctamente\n");
-        getchar();
+        printf( "Usuario añadido correctamente\n" );
+        getchar( );
         return verdadero;
     }
 }
 
 // Contenido de la funciOn "eliminarUsuario"
-void eliminarUsuario( Usuario *adm, ListaUsuarios *misUsuarios ){
-    Usuario *aux = (Usuario *) malloc( sizeof(Usuario) );
-    Usuario *elim = (Usuario *) malloc( sizeof(Usuario) );
+void eliminarUsuario( Usuario *adm, ListaUsuarios *misUsuarios ) {
+    Usuario *aux = (Usuario *) malloc( sizeof( Usuario ) );
+    Usuario *elim = (Usuario *) malloc( sizeof( Usuario ) );
 
-    printf("A continuación confirme sus datos de administrador\n");
-    printf("(igualmente no le basta con una su cuenta para borrar\n");
-    printf("a un usuario, también requerirá la contraseña del\n");
-    printf("usuario a borrar\n");
+    printf( "A continuación confirme sus datos de administrador\n" );
+    printf( "(igualmente no le basta con una su cuenta para borrar\n" );
+    printf( "a un usuario, también requerirá la contraseña del\n" );
+    printf( "usuario a borrar\n" );
     leerDatosUsuario( aux->cuenta, aux->contrasena );
 
     if (
-            strcmp(adm->cuenta,aux->cuenta) != 0 ||
-            strcmp(adm->contrasena,aux->contrasena) != 0
+            strcmp( adm->cuenta, aux->cuenta ) != 0 ||
+            strcmp( adm->contrasena, aux->contrasena ) != 0
        )
     {
-        free(aux);
-        printf("Cuenta o contraseña incorrectas\n");
-        getchar();
-        getchar();
+        free( aux );
+        printf( "Cuenta o contraseña incorrectas\n" );
+        getchar( );
+        getchar( );
     }
     else
     {
-        printf("Ahora indique el usuario que desea borrar\n");
+        printf( "Ahora indique el usuario que desea borrar\n" );
         leerDatosUsuario( elim->cuenta, elim->contrasena );
         if (
                 strcmp( elim->cuenta, adm->cuenta ) == 0 &&
                 strcmp( elim->contrasena, adm->contrasena ) == 0
            )
         {
-            printf("No te puedes eliminar a ti mismo\n");
-            getchar();
-            getchar();
+            printf( "No te puedes eliminar a ti mismo\n" );
+            getchar( );
+            getchar( );
             return;
         }
 
-        int i;
-        free(aux);
+        free( aux );
         aux = misUsuarios->primero;
-        for ( i = 1; i <= misUsuarios->num_usuarios; ++i) {
-            printf("hola %d ",i);
+        for ( int i = 1; i <= misUsuarios->num_usuarios; ++i) {
+            // printf( "hola %d ", i);
             if (
                     strcmp( elim->cuenta, aux->cuenta ) == 0 &&
                     strcmp( elim->contrasena, aux->contrasena ) == 0
@@ -622,135 +619,132 @@ void eliminarUsuario( Usuario *adm, ListaUsuarios *misUsuarios ){
                     misUsuarios->ultimo = misUsuarios->ultimo->anterior;
                 }
 
-                free(elim);
+                free( elim );
                 --misUsuarios->num_usuarios;
                 escribirBD_Usuarios( misUsuarios );
                 printf("Se ha eliminado un usuario correctamente\n");
-                getchar();
-                getchar();
+                getchar( );
+                getchar( );
                 return;
             }
             aux = aux->siguiente;
         }
-        getchar();
-        getchar();
+        getchar( );
+        getchar( );
     }
 }
 
 // Contenido de la funciOn "leerBD_Productos"
 void leerBD_Productos( ListaProductos *misProductos ) {
-    FILE *ap_BD_productos = fopen(ARCHIVO_PRODUCTOS,"r");
+    FILE *ap_BD_productos = fopen( ARCHIVO_PRODUCTOS, "r" );
     Producto *nvo;
 
-    printf("Leyendo la base de datos de productos...\n");
+    printf( "Leyendo la base de datos de productos...\n" );
     getchar();
 
     if ( ap_BD_productos ) {
 
-        while ( !feof(ap_BD_productos) ) {
-            nvo = (Producto*) malloc( sizeof(Producto) );
-            fscanf(ap_BD_productos,"%30[^\t]\t",nvo->nombre);
-            fscanf(ap_BD_productos,"%d\t",&nvo->cantidad);
-            fscanf(ap_BD_productos,"%f\t\n",&nvo->precio);
+        while ( !feof( ap_BD_productos ) ) {
+            nvo = (Producto*) malloc( sizeof( Producto ) );
+            fscanf( ap_BD_productos, "%30[^\t]\t", nvo->nombre );
+            fscanf( ap_BD_productos, "%d\t", &nvo->cantidad );
+            fscanf( ap_BD_productos, "%f\t\n", &nvo->precio );
 
-            printf("Se ha leido un producto\n");
-            printf("Sus datos son %s %d %.2f\n",nvo->nombre,nvo->cantidad,nvo->precio);
+            printf( "Se ha leido un producto\n" );
+            printf( "Sus datos son %s %d %.2f\n", nvo->nombre, nvo->cantidad, nvo->precio );
             agregarProducto( nvo, misProductos );
         }
 
-        printf("La base de datos de productos se ha leido completamente\n");
-        printf("Sus datos son\n");
+        printf( "La base de datos de productos se ha leido completamente\n" );
+        printf( "Sus datos son\n" );
 
         Producto *aux = misProductos->primero;
         for ( int i = 1; i <= misProductos->num_productos; ++i ) {
-            printf("%d %s %d %.2f\n", i, aux->nombre, aux->cantidad, aux->precio);
+            printf( "%d %s %d %.2f\n", i, aux->nombre, aux->cantidad, aux->precio);
             aux = aux->siguiente;
         }
 
-        fclose(ap_BD_productos);
+        fclose( ap_BD_productos );
     } else {
-        printf("No hay productos guardados\n");
+        printf( "No hay productos guardados\n" );
     }
 
     escribirBD_Productos( misProductos );
-    getchar();
+    getchar( );
 }
 
 // Contenido de la funciOn "escribirBD_Productos"
 void escribirBD_Productos( ListaProductos *misProductos ){
-    FILE *ap_BD_productos = fopen(ARCHIVO_PRODUCTOS,"w");
+    FILE *ap_BD_productos = fopen( ARCHIVO_PRODUCTOS, "w" );
     Producto *aux = misProductos->primero;
 
-    for ( int i = 1; i <= misProductos->num_productos; ++i){
-        fprintf(ap_BD_productos,"%s\t%d\t%.2f\t\n",aux->nombre,aux->cantidad, aux->precio);
+    for ( int i = 1; i <= misProductos->num_productos; ++i ) {
+        fprintf( ap_BD_productos, "%s\t%d\t%.2f\t\n", aux->nombre, aux->cantidad, aux->precio );
         aux = aux->siguiente;
     }
 
-    fclose(ap_BD_productos);
+    fclose( ap_BD_productos );
 }
 
 // Contenido de la funciOn "mostrarProductos"
 void mostrarProductos( void ){
-    FILE *ap_BD_productos = fopen(ARCHIVO_PRODUCTOS,"r");
-    unsigned char cadena[LONG_NOMBRE_PRODUCTO + 1];
+    FILE *ap_BD_productos = fopen( ARCHIVO_PRODUCTOS, "r" );
+    unsigned char cadena[ LONG_NOMBRE_PRODUCTO + 1 ];
     unsigned int entero;
     float flotante;
 
-    int i = 1;
-
     if ( ap_BD_productos ) {
-
-        while ( !feof(ap_BD_productos) ) {
-            printf("%2d",i);
-            fscanf(ap_BD_productos,"%30[^\t]\n",cadena);
-            printf("\t%30s",cadena);
-            fscanf(ap_BD_productos,"%d\t",&entero);
-            printf("\t%10d",entero);
-            fscanf(ap_BD_productos,"%f\t\n",&flotante);
-            printf("\t%.2f\n",flotante);
+        int i = 1;
+        while ( !feof( ap_BD_productos ) ) {
+            printf( "%2d", i );
+            fscanf( ap_BD_productos, "%30[^\t]\n", cadena );
+            printf( "\t%30s", cadena);
+            fscanf( ap_BD_productos, "%d\t", &entero );
+            printf( "\t%10d", entero);
+            fscanf( ap_BD_productos, "%f\t\n", &flotante );
+            printf( "\t%.2f\n", flotante );
             ++i;
         }
-        putchar('\n');
+        putchar( '\n' );
 
-        fclose(ap_BD_productos);
+        fclose( ap_BD_productos );
     } else {
-        printf("Parece que no hay productos registrados\n");
+        printf( "Parece que no hay productos registrados\n" );
     }
-    getchar();
-    getchar();
+    getchar( );
+    getchar( );
 }
 
 // Contenido de la funciON "nuevoProducto"
-Producto * crearProducto(void){
+Producto * crearProducto( void ) {
     Producto *aux;
 
-    aux = (Producto *) malloc( sizeof(Producto) );
+    aux = (Producto *) malloc( sizeof( Producto ) );
     aux->siguiente = NULL;
     aux->anterior = NULL;
 
-    printf("Ingrese el nombre: \n");
-    scanf("%30s",aux->nombre);
-    leerLineaYDescartar();
-    fflush(stdin);
+    printf( "Ingrese el nombre: \n" );
+    scanf( "%30s", aux->nombre );
+    leerLineaYDescartar( );
+    fflush( stdin );
 
     do {
-        printf("Ingrese la cantidad de ejemplares del producto\n");
-        scanf("%d",&aux->cantidad);
+        printf( "Ingrese la cantidad de ejemplares del producto\n" );
+        scanf( "%d", &aux->cantidad );
     } while ( aux->cantidad < 0 );
 
     do {
-        printf("Ingrese el costo del producto\n");
-        scanf("%f",&aux->precio);
-        fflush(stdin);
+        printf( "Ingrese el costo del producto\n" );
+        scanf( "%f", &aux->precio );
+        leerLineaYDescartar( );
     } while ( aux->precio <= 0 );
     return aux;
 }
 
 // Contenido de la funciON "agregarProducto"
-Booleano agregarProducto( Producto * nvo, ListaProductos *misProductos){
+Booleano agregarProducto( Producto * nvo, ListaProductos *misProductos ) {
     Producto *apt = misProductos->primero;
     Booleano existente = falso;
-    int i;
 
     for ( int i = 1; i <= misProductos->num_productos ; ++i ) {
         if ( strcmp( apt->nombre, nvo->nombre ) == 0 ) {
@@ -760,8 +754,8 @@ Booleano agregarProducto( Producto * nvo, ListaProductos *misProductos){
     }
 
     if ( existente ) {
-        printf("Lo sentimos, el nombre de producto ya esta ocupado\n");
-        getchar();
+        printf( "Lo sentimos, el nombre de producto ya esta ocupado\n" );
+        getchar( );
         return falso;
     } else {
         if ( misProductos->num_productos != 0 ) {
@@ -773,40 +767,39 @@ Booleano agregarProducto( Producto * nvo, ListaProductos *misProductos){
         }
 
         ++misProductos->num_productos;
-        printf("producto añadido correctamente\n");
-        getchar();
+        printf( "producto añadido correctamente\n" );
+        getchar( );
         return verdadero;
     }
 }
 
 // Contenido de la funciOn "eliminarProducto"
 void eliminarProducto( Usuario *adm, ListaProductos *misProductos ) {
-    Usuario *usr = (Usuario *) malloc( sizeof(Usuario) );
-    Producto *elim = (Producto *) malloc( sizeof(Producto) );
+    Usuario *usr = (Usuario *) malloc( sizeof( Usuario ) );
+    Producto *elim = (Producto *) malloc( sizeof( Producto ) );
     Producto *aux;
 
-    printf("A continuación confirme sus datos de administrador\n");
+    printf( "A continuación confirme sus datos de administrador\n" );
     leerDatosUsuario( usr->cuenta, usr->contrasena );
 
     if (
-            strcmp(adm->cuenta,usr->cuenta) != 0 ||
-            strcmp(adm->contrasena,usr->contrasena) != 0
+            strcmp( adm->cuenta, usr->cuenta ) != 0 ||
+            strcmp( adm->contrasena, usr->contrasena ) != 0
        )
     {
-        printf("Cuenta o contraseña incorrectas\n");
-        free(usr);
-        getchar();
-        getchar();
+        printf( "Cuenta o contraseña incorrectas\n" );
+        free( usr );
+        getchar( );
+        getchar( );
     }
     else
     {
-        printf("Ahora indique el producto que desea borrar\n");
-        scanf("%30s",elim->nombre);
+        printf( "Ahora indique el producto que desea borrar\n" );
+        scanf( "%30s", elim->nombre );
 
-        int i;
-        free(usr);
+        free( usr );
         aux = misProductos->primero;
-        for ( i = 1; i <= misProductos->num_productos; ++i) {
+        for ( int i = 1; i <= misProductos->num_productos; ++i ) {
             if ( strcmp( elim->nombre, aux->nombre ) == 0 ) {
                 if (
                         misProductos->primero != aux &&
@@ -832,23 +825,23 @@ void eliminarProducto( Usuario *adm, ListaProductos *misProductos ) {
                     misProductos->ultimo = misProductos->ultimo->anterior;
                 }
 
-                free(elim);
+                free( elim );
                 --misProductos->num_productos;
                 escribirBD_Productos( misProductos );
                 printf("Se ha eliminado un producto correctamente\n");
-                getchar();
-                getchar();
+                getchar( );
+                getchar( );
                 return;
             }
             aux = aux->siguiente;
         }
-        getchar();
-        getchar();
+        getchar( );
+        getchar( );
     }
 }
 
 // Contenido de la funciOn "leerLineaYDescartar"
 void leerLineaYDescartar( void ) {
-    char cadena[100];
-    scanf("%[^\n]",cadena);
+    scanf("%*[^\n]");
+    scanf("%*c");
 }
