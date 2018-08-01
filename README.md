@@ -3,4 +3,4 @@
 Martínez Ortiz Saúl Axel, NPB:5
 
 Data base course homework:
-    Simple implementation of a DBM in C
+    Simple implementation (Just a legacy Rockye implementation, nothing really complicated) of a DBM in C
